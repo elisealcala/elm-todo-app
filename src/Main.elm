@@ -54,7 +54,7 @@ initialModel =
 
 elmHubHeader : Html Msg
 elmHubHeader =
-    header []
+    header [ class "bg-red-100" ]
         [ h1 [] [ text "ElmHub" ]
         , span [ class "tagline" ] [ text "Like GitHub, but for Elm things." ]
         ]
@@ -63,7 +63,7 @@ elmHubHeader =
 view : Model -> Html Msg
 view model =
     div [ class "content" ]
-        [ header []
+        [ header [ class "bg-red-100" ]
             [ h1 [] [ text "ElmHub" ]
             , span [ class "tagline" ] [ text "Like GitHub, but for Elm things." ]
             ]
