@@ -4,67 +4,36 @@ import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
-
+import Random exposing (int)
 
 type alias Model =
     { query : String
-    , results : List SearchResult
+    , todos : List Todo
     }
 
 
-type alias SearchResult =
+type alias Todo =
     { id : Int
     , name : String
-    , stars : Int
     }
 
-
 type Msg
-    = SetQuery String
-    | DeleteById Int
+    = AddTodo
+    | SetQuery String
+    | DeleteTodo Int
 
 
 initialModel : Model
 initialModel =
-    { query = "tutorial"
-    , results =
-        [ { id = 1
-          , name = "TheSeamau5/elm-checkerboardgrid-tutorial"
-          , stars = 66
-          }
-        , { id = 2
-          , name = "grzegorzbalcerek/elm-by-example"
-          , stars = 41
-          }
-        , { id = 3
-          , name = "sporto/elm-tutorial-app"
-          , stars = 35
-          }
-        , { id = 4
-          , name = "jvoigtlaender/Elm-Tutorium"
-          , stars = 10
-          }
-        , { id = 5
-          , name = "sporto/elm-tutorial-assets"
-          , stars = 7
-          }
-        ]
+    { query = ""
+    , todos = []
     }
-
-
-elmHubHeader : Html Msg
-elmHubHeader =
-    header [ class "bg-red-100" ]
-        [ h1 [] [ text "ElmHub" ]
-        , span [ class "tagline" ] [ text "Like GitHub, but for Elm things." ]
-        ]
-
 
 view : Model -> Html Msg
 view model =
     div [ class "content" ]
         [ header [ class "bg-red-100" ]
-            [ h1 [] [ text "ElmHub" ]
+            [ h1 [] [ text "New Todo App build with Elm" ]
             , span [ class "tagline" ] [ text "Like GitHub, but for Elm things." ]
             ]
         , input
@@ -74,35 +43,29 @@ view model =
             , value model.query
             ]
             []
-        , span [] [ text model.query ]
-        , button [ class "search-button" ] [ text "Search" ]
-        , ul [ class "results" ] (List.map viewSearchResult model.results)
+        , button [ class "search-button", onClick AddTodo ] [ text "Add Todo" ]
+        , ul [ class "results" ] (List.map viewSearchResult model.todos)
         ]
 
 
-viewSearchResult : SearchResult -> Html Msg
-viewSearchResult result =
+viewSearchResult : Todo -> Html Msg
+viewSearchResult todo =
     li []
-        [ span [ class "star-count" ] [ text (String.fromInt result.stars) ]
-        , a [ href ("https://github.com/" ++ result.name), target "_blank" ]
-            [ text result.name ]
+        [ span [ class "star-count" ] [ text todo.name ]
         , button
-            -- TODO add an onClick handler that sends a DeleteById msg
-            [ class "hide-result", onClick (DeleteById result.id) ]
+            [ class "hide-result", onClick (DeleteTodo todo.id)]
             [ text "X" ]
         ]
 
-
 update : Msg -> Model -> Model
 update msg model =
-    -- TODO if we get a SetQuery msg, use it to set the model's query field,
-    -- and if we get a DeleteById msg, delete the appropriate result
     case msg of
-        SetQuery query ->
-            { model | query = query }
-
-        DeleteById int ->
-            { model | results = List.filter (\result -> int /= result.id) model.results }
+        AddTodo ->
+            { model | todos = { id= 0, name= model.query } :: model.todos, query = "" }
+        SetQuery str ->
+            { model | query = str }
+        DeleteTodo id ->
+            { model | todos = List.filter(\todo -> todo.id /= id) model.todos }
 
 
 main : Program () Model Msg
