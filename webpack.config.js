@@ -18,6 +18,7 @@ module.exports = {
             options: {
                 verbose: true,
                 debug: true,
+                pathToElm: 'node_modules/.bin/elm'
             }
           }
         ]
