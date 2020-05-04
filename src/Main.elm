@@ -35,7 +35,7 @@ initialModel =
 
 view : Model -> Html Msg
 view model =
-    div [ class "todo-container p-24 bg-white shadow-sm rounded flex flex-col mx-auto my-48" ]
+    div [ class "text-center" ] [ div [ class "todo-container text-left p-24 bg-white shadow-sm rounded flex flex-col mx-auto my-48" ]
         [ header [ ]
             [ h1 [ class "text-24 font-bold mb-24" ] [ text "Todo List" ]
             ]
@@ -50,7 +50,9 @@ view model =
             , button [ class "btn", type_ "submit", disabled (model.field == "") ] [ text "Create" ]
         ]
         , ul [ class "text-left mt-24" ] (List.map viewSearchResult model.todos)
-        ]
+    ]
+    , a [ class "mt-48 text-12 text-gray-800", href "https://github.com/elisealcala/elm-todo-app" ] [ text "Github" ]
+    ]
 
 
 viewSearchResult : Todo -> Html Msg
