@@ -1,3 +1,54 @@
 @tailwind base;
 @tailwind components;
+
+body {
+  @apply bg-gray-200
+}
+
+.todo-input {
+  @apply bg-gray-300 text-gray-600 outline-none px-12 py-4 rounded;
+  width: 70%;
+}
+
+.btn {
+  @apply bg-gray-800 text-white px-12 py-4 rounded text-12 uppercase
+}
+
+.btn:hover {
+  @apply bg-gray-900
+}
+
+.btn:disabled {
+  @apply bg-gray-300 text-gray-600
+}
+
+.completed {
+  opacity: 0.5;
+}
+
+.completed::after {
+  @apply absolute w-full bg-gray-600;
+  content: '';
+  height: 1px;
+  top: 50%;
+  z-index: -1;
+  right: 0;
+}
+
+.text-todo {
+  @apply cursor-pointer relative;
+  width: calc(100% - 20px);
+}
+
 @tailwind utilities;
+
+
+.todo-container {
+  max-width: 90%;
+}
+
+@media (min-width: 768px) {
+  .todo-container {
+    max-width: 600px;
+  }
+}
