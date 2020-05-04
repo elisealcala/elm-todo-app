@@ -3,11 +3,12 @@ module Main exposing (..)
 import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick, onInput)
-import Random exposing (int)
+import Html.Events exposing (onClick, onInput, onSubmit)
+
 
 type alias Model =
-    { query : String
+    { field : String
+    , uid : Int
     , todos : List Todo
     }
 
@@ -15,45 +16,49 @@ type alias Model =
 type alias Todo =
     { id : Int
     , name : String
+    , isComplete: Bool
     }
 
 type Msg
     = AddTodo
-    | SetQuery String
+    | SetField String
     | DeleteTodo Int
+    | CompleteTodo Int Bool
 
 
 initialModel : Model
 initialModel =
-    { query = ""
+    { field = ""
+    , uid = 0
     , todos = []
     }
 
 view : Model -> Html Msg
 view model =
-    div [ class "content" ]
-        [ header [ class "bg-red-100" ]
-            [ h1 [] [ text "New Todo App build with Elm" ]
-            , span [ class "tagline" ] [ text "Like GitHub, but for Elm things." ]
+    div [ class "todo-container p-24 bg-white shadow-sm rounded flex flex-col mx-auto my-48" ]
+        [ header [ ]
+            [ h1 [ class "text-24 font-bold mb-24" ] [ text "Todo List" ]
             ]
-        , input
-            [ class "search-query"
-            , onInput
-                (\string -> SetQuery string)
-            , value model.query
-            ]
-            []
-        , button [ class "search-button", onClick AddTodo ] [ text "Add Todo" ]
-        , ul [ class "results" ] (List.map viewSearchResult model.todos)
+        , Html.form [ class "w-full flex justify-between" ,onSubmit AddTodo ] [
+            input
+                [ class "todo-input"
+                , onInput
+                    (\string -> SetField string)
+                , value model.field
+                ]
+                []
+            , button [ class "btn", type_ "submit", disabled (model.field == "") ] [ text "Create" ]
+        ]
+        , ul [ class "text-left mt-24" ] (List.map viewSearchResult model.todos)
         ]
 
 
 viewSearchResult : Todo -> Html Msg
 viewSearchResult todo =
-    li []
-        [ span [ class "star-count" ] [ text todo.name ]
+    li [ class "border-b border-gray-200 py-8 flex justify-between", onClick (CompleteTodo todo.id todo.isComplete) ]
+        [ span [ classList[("completed", todo.isComplete)], class "text-todo" ] [ text todo.name ]
         , button
-            [ class "hide-result", onClick (DeleteTodo todo.id)]
+            [ class "text-gray-800 outline-none", onClick (DeleteTodo todo.id)]
             [ text "X" ]
         ]
 
@@ -61,11 +66,21 @@ update : Msg -> Model -> Model
 update msg model =
     case msg of
         AddTodo ->
-            { model | todos = { id= 0, name= model.query } :: model.todos, query = "" }
-        SetQuery str ->
-            { model | query = str }
+            { model | todos = { id = model.uid, name = model.field, isComplete = False } :: model.todos, field = "", uid = model.uid + 1 }
+        SetField str ->
+            { model | field = str }
         DeleteTodo id ->
             { model | todos = List.filter(\todo -> todo.id /= id) model.todos }
+        CompleteTodo id complete ->
+            let
+                updateTodo todo =
+                    if todo.id == id then
+                        { todo | isComplete = not complete }
+                    else
+                        todo
+            in
+            { model | todos = List.map updateTodo model.todos }
+
 
 
 main : Program () Model Msg
